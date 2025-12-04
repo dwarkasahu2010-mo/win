@@ -1,0 +1,191 @@
+
+/**
+ * Configuration variables
+ * configPath -> location path where the schema list is found;
+ * baseJsonPath -> location path where all the schema jsons are held;
+ * globalSplitter -> splitter regex, in order to get and determine the schema JSON path; 
+ */
+
+//replace the config path with the location path for the schema-list.txt
+const configPath= 'https://www.hpe.com/global/assets/seo-schema/config/schema-list.txt';
+const baseJsonPath = 'https://www.hpe.com/global/assets/seo-schema/json-data/';
+//const baseJsonPath = 'https://www.hpe.com/h41361/seo/seo-schema/json-data/';
+const globalSplitter = "www.hpe.com";
+let isHeadLogic = false;
+let isGetLogic = false;
+
+async function initSchemaInject(configPath) {
+    
+    const response = await fetch(configPath);
+    
+    if(!response.ok) {
+        throw new Error('[SEO-SCHEMA] Schema config file not found. \nNetwork Status: ${response.statusText}');
+    }
+
+    const text = await response.text();
+    
+    if(isEmpty(text)){
+        throw new Error('[SEO-SCHEMA] No schemas found in the config file.');
+    }
+    
+    const lines = text.split(/\r?\n/);
+    return lines;
+}
+
+function isEmpty(lines) {
+    return lines.trim().length == 0;
+}
+
+function extractPagePath(url, splitter) {
+    //extract the path based on the splitter provided;
+    let path = url.split(splitter)[1];
+    if(path.includes("?")){
+        let pathWithoutParams = path.substring(0,path.indexOf('?'));
+        return pathWithoutParams.charAt(0) === '/' ? pathWithoutParams.replace("/", '') : pathWithoutParams;
+    }
+    return path.charAt(0) === '/' ? path.replace("/", '') : path;
+}
+
+function extractDomain(url) {
+    try {
+        const {hostname} = new URL(url);
+        return hostname;
+    } catch(error) {
+        console.error('[SEO-SCHEMA] Invalid url: ${url}',error);
+        return undefined;
+    }
+}
+function injectJson(json) {
+    
+    let jsonSchema = baseJsonPath.concat(json);
+    fetch(jsonSchema)
+        .then(response => {
+            if(!response.ok) {
+                throw new Error('[SEO-SCHEMA] JSON file not found. \nNetwork status: ${response.statusText}');
+            }
+            return response.json();
+        })
+        .then(data => {
+            let headTag = document.head;
+            let scriptTag = document.createElement('script');
+            scriptTag.type = 'application/ld+json';
+            scriptTag.textContent = JSON.stringify(data, null, 4);
+            headTag.appendChild(scriptTag);
+        }).catch(error => {console.error('[SEO-SCHEMA] JSON injection.',error)});
+}
+
+async function initSchemaInjectV2(json) {
+    
+    let url = new URL(baseJsonPath.concat(json));
+
+    if (isHeadLogic) {
+        console.log("[SEO-SCHEMA] JSON injection using two HTTP request's (HEAD and GET)");
+        try {
+            const response = await fetch(url,{
+                method: 'HEAD'
+            });
+            if (response.ok) {
+                injectJson(json);
+            } else if (response.status === 404 ) {
+                const location = window.location.href;
+                console.log('[SEO-SCHEMA] JSON NOT FOUND FOR URL : ${location}');
+            }
+        
+        }catch(error) {
+            console.error('Network errror: ${error}');
+        }
+
+    } else {
+        console.log("[SEO-SCHEMA] JSON injection using One HTTP request's (GET)");
+        try {
+            const response = await fetch(url);
+            if (response.ok) {
+                // throw new Error('Network response was not ok: ${response.statusText}');
+                const jsonData = await response.json();
+                injectJsonInHTML(jsonData);
+            } else if (response.status === 404 ) {
+                const location = window.location.href;
+                console.log('[SEO-SCHEMA] JSON NOT FOUND FOR URL : ${location}');
+            }
+        
+        }catch(error) {
+            console.error('Network errror: ${error}');
+        }
+    }
+
+}
+
+function injectJsonInHTML(jsonData) {
+    let headTag = document.head;
+    let scriptTag = document.createElement('script');
+    scriptTag.type = 'application/ld+json';
+    scriptTag.textContent = JSON.stringify(jsonData, null, 4);
+    headTag.appendChild(scriptTag);
+    console.log('[SEO-SCHEMA] Schema injection finished successfully.');
+}
+
+//Main function
+(function() {
+
+    if(isVersionTwoSchemaInjection()) {
+        console.log('[SEO-SCHEMA] Schema injection V2 initialized');
+        let url = window.location.href;
+        if(isDomainAllowed(url)) {
+            let json = extractPagePath(url,globalSplitter).concat("/schema.json");
+            initSchemaInjectV2(json);
+        }
+       
+    }else{
+        initSchemaInject(configPath).then( schemas => {
+            console.log('[SEO-SCHEMA] Schema init injection started.');
+            let url = window.location.href;
+            
+            if(isDomainAllowed(url)) {
+                let json = extractPagePath(url,globalSplitter).concat("/schema.json");
+                const foundJson = schemas.find((element) => element === json);
+                if(foundJson) {
+                    injectJson(foundJson);
+                }else {
+                    console.log('[SEO-SCHEMA] No existing schema for url: ${url}');
+                }
+            }
+        }).catch(error => {console.error('[SEO-SCHEMA] Schema init injection.',error)});
+    }
+    
+})();
+
+function isDomainAllowed(url) {
+    let allowedDomains = ['www.hpe.com', 'localhost:8080'];
+    let extractedDomain = extractDomain(url);
+    
+    if (extractedDomain === undefined) {
+        throw new Error('[SEO-SCHEMA] Domain not allowed for schema injection.');
+    }
+
+    if(extractedDomain === 'localhost') {
+        extractedDomain = extractedDomain.concat(":8080");
+    }
+    
+    return allowedDomains.includes(extractedDomain);
+}
+function isVersionTwoSchemaInjection() {
+    isHeadLogic = true;
+    return true;
+/*
+    let v2Param = "seoschematestV2";
+    const queryString = window.location.search;
+    
+    const urlParams = new URLSearchParams(queryString);
+    
+    if(urlParams.get(v2Param) !== null) {
+        if (urlParams.get(v2Param) ==1) {
+            isHeadLogic = true;
+        }
+        else {
+            isGetLogic = true;
+        }
+        return true;
+    }
+    return false;
+*/
+}
