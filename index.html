@@ -1,0 +1,285 @@
+/*
+App.jsx
+A single-file React component (Tailwind + Framer Motion) for a unique WIN COE website.
+Usage:
+1. Create a Vite React app: `npm create vite@latest win-coe -- --template react`
+2. Install dependencies: `npm install` then `npm install framer-motion`
+3. Install and configure TailwindCSS (https://tailwindcss.com/docs/guides/vite)
+4. Replace src/App.jsx with this file and add src/index.css (Tailwind directives).
+5. Run with `npm run dev`.
+
+Notes: This is a single-file visual demo. Replace placeholder images/icons with real assets in /public or use external URLs.
+*/
+
+import React from "react";
+import { motion } from "framer-motion";
+
+const researchAreas = [
+  {
+    id: "adv-computing",
+    title: "Advanced Computing",
+    desc: "HPC, distributed systems, edge-cloud convergence and next-gen architectures.",
+    icon: (
+      <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="3" y="6" width="18" height="12" rx="2" stroke="currentColor" strokeWidth="1.5"/>
+        <path d="M7 3v3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+        <path d="M17 3v3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      </svg>
+    ),
+  },
+  {
+    id: "ai",
+    title: "Artificial Intelligence",
+    desc: "Foundations of ML, responsible AI, multimodal systems and real-world deployments.",
+    icon: (
+      <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.5"/>
+        <path d="M12 3v2M12 19v2M3 12h2M19 12h2M5 5l1.5 1.5M18.5 18.5L20 20M5 19l1.5-1.5M18.5 5L20 3.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+      </svg>
+    ),
+  },
+  {
+    id: "bio-tech",
+    title: "Bio-tech & Bio-engineering",
+    desc: "Biomaterials, biofabrication and translational research bridging lab-to-product.",
+    icon: (
+      <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2v20" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+        <path d="M7 7c2 2 6 2 8 0" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+        <path d="M7 17c2-2 6-2 8 0" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      </svg>
+    ),
+  },
+  {
+    id: "healthtech",
+    title: "HealthTech",
+    desc: "Digital health platforms, diagnostics, wearable sensors and clinical integrations.",
+    icon: (
+      <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 21c4-1 6-5 6-9a6 6 0 10-12 0c0 4 2 8 6 9z" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M10 11h4M12 9v4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    ),
+  },
+  {
+    id: "spacetech",
+    title: "SpaceTech",
+    desc: "Small satellites, remote sensing, autonomy and space materials research.",
+    icon: (
+      <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 20l4-8 8-8 2 2-8 8-8 4z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+        <circle cx="18" cy="6" r="1" fill="currentColor"/>
+      </svg>
+    ),
+  },
+  {
+    id: "quantum",
+    title: "Quantum",
+    desc: "Quantum algorithms, hardware-aware software and hybrid quantum-classical systems.",
+    icon: (
+      <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="6" stroke="currentColor" strokeWidth="1.2"/>
+        <path d="M2 12h20M12 2v20" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/>
+      </svg>
+    ),
+  },
+  {
+    id: "critical-minerals",
+    title: "Critical Minerals & Mining",
+    desc: "Sustainable extraction, processing and materials for clean energy transitions.",
+    icon: (
+      <svg className="w-10 h-10" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 7l9-4 9 4v10l-9 4-9-4V7z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M9 13l3 3 3-3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    ),
+  },
+];
+
+export default function App() {
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-slate-100 antialiased">
+      <header className="container mx-auto px-6 py-8 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="w-14 h-14 bg-gradient-to-br from-indigo-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-2xl">
+            <span className="font-bold">WIN</span>
+          </div>
+          <div>
+            <h1 className="text-2xl font-semibold">Wadhwani Innovation Network — Centre of Excellence</h1>
+            <p className="text-sm text-slate-300">Indian Institute of Technology Hyderabad</p>
+          </div>
+        </div>
+        <nav className="hidden md:flex gap-6 text-slate-200">
+          <a href="#research" className="hover:underline">Research</a>
+          <a href="#people" className="hover:underline">People</a>
+          <a href="#collab" className="hover:underline">Collaborate</a>
+        </nav>
+      </header>
+
+      <main className="container mx-auto px-6">
+        {/* HERO */}
+        <section className="grid md:grid-cols-2 gap-8 items-center py-12">
+          <div>
+            <motion.h2 initial={{ x: -30, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.6 }} className="text-4xl md:text-5xl font-extrabold leading-tight">
+              Building cross-disciplinary technologies for a resilient future
+            </motion.h2>
+            <p className="mt-4 text-slate-300 max-w-xl">
+              WIN COE @ IIT Hyderabad brings together Advanced Computing, AI, BioTech, HealthTech, SpaceTech, Quantum, and Critical Minerals research to accelerate translational outcomes and industry collaborations.
+            </p>
+            <div className="mt-6 flex gap-4">
+              <a className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-pink-500 font-semibold shadow-lg hover:scale-105 transform transition">Get Involved</a>
+              <a className="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-slate-700 text-slate-200 hover:bg-slate-800">Explore Labs</a>
+            </div>
+
+            <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3">
+              <StatCard label="Projects" value="35+" />
+              <StatCard label="Industry Partners" value="20+" />
+              <StatCard label="Patents" value="8" />
+            </div>
+          </div>
+
+          <div className="relative">
+            <div className="rounded-xl overflow-hidden shadow-2xl ring-1 ring-black/20">
+              <div className="bg-[url('/hero-pattern.svg')] bg-cover bg-center h-80 md:h-96 flex items-center justify-center">
+                <div className="backdrop-blur-md bg-black/20 p-6 rounded-xl">
+                  <h3 className="text-xl font-bold">Interdisciplinary Labs</h3>
+                  <p className="mt-2 text-slate-300">A sandbox for ideation, prototypes and pilot deployments with industry-grade testbeds.</p>
+                </div>
+              </div>
+            </div>
+            <div className="absolute -bottom-6 left-6 w-40 h-20 rounded-xl bg-gradient-to-r from-emerald-400/20 to-cyan-400/10 border border-white/10 p-3 text-sm">
+              <strong className="block">Spotlight</strong>
+              <span className="text-slate-300 text-xs">Satellite imaging for sustainable mining</span>
+            </div>
+          </div>
+        </section>
+
+        {/* RESEARCH GRID */}
+        <section id="research" className="py-12">
+          <h2 className="text-3xl font-bold">Research Focus Areas</h2>
+          <p className="mt-2 text-slate-300 max-w-2xl">Our labs span foundational research to industry-coupled projects across several strategic domains.</p>
+
+          <div className="mt-8 grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+            {researchAreas.map((r, i) => (
+              <motion.article
+                key={r.id}
+                initial={{ y: 20, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                transition={{ delay: i * 0.08 }}
+                className="group relative rounded-2xl p-6 bg-gradient-to-br from-white/3 to-white/2 border border-white/5 backdrop-blur-sm hover:scale-[1.02] transform transition-shadow shadow-lg"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="p-3 rounded-xl bg-white/5 ring-1 ring-white/6">{r.icon}</div>
+                  <div>
+                    <h3 className="text-lg font-semibold">{r.title}</h3>
+                    <p className="mt-1 text-slate-300 text-sm max-w-xs">{r.desc}</p>
+                  </div>
+                </div>
+
+                <div className="mt-4">
+                  <a className="inline-flex items-center gap-2 text-sm font-medium text-indigo-200 hover:underline">Learn more →</a>
+                </div>
+              </motion.article>
+            ))}
+          </div>
+        </section>
+
+        {/* PEOPLE & COLLAB */}
+        <section id="people" className="py-12 grid md:grid-cols-3 gap-6">
+          <div className="md:col-span-2 rounded-2xl p-6 bg-gradient-to-br from-white/3 to-white/2 border border-white/5">
+            <h3 className="text-2xl font-semibold">People & Labs</h3>
+            <p className="mt-2 text-slate-300">Profiles of faculty, doctoral students, and innovation leads working on WIN themes.</p>
+
+            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <ProfileCard name="Prof. A. Research" title="Lead - Advanced Computing" bio="Working on scalable HPC and heterogeneous systems." />
+              <ProfileCard name="Dr. B. Innovator" title="Lead - AI & HealthTech" bio="Applied ML for clinical decision support and wearable sensing." />
+            </div>
+          </div>
+
+          <div className="rounded-2xl p-6 flex flex-col gap-4 justify-between bg-gradient-to-br from-white/3 to-white/2 border border-white/5">
+            <div>
+              <h4 className="text-lg font-semibold">Collaborate with us</h4>
+              <p className="mt-2 text-slate-300 text-sm">Industry partnerships, student projects, and sponsored research opportunities.</p>
+            </div>
+            <div className="mt-4">
+              <button className="w-full py-3 rounded-lg bg-indigo-600 font-semibold">Partner Portal</button>
+            </div>
+          </div>
+        </section>
+
+        {/* CTA */}
+        <section id="collab" className="py-12 text-center">
+          <motion.div initial={{ scale: 0.98, opacity: 0.8 }} whileInView={{ scale: 1, opacity: 1 }} className="rounded-3xl p-10 bg-gradient-to-r from-indigo-700 to-pink-600 shadow-2xl">
+            <h3 className="text-2xl font-bold">Want to pilot a real-world prototype?</h3>
+            <p className="mt-2 text-slate-100">We welcome collaborative pilots that demonstrate societal impact and technical novelty.</p>
+            <div className="mt-6 max-w-xl mx-auto flex gap-3 justify-center">
+              <a className="px-5 py-3 rounded-lg bg-white text-slate-900 font-semibold">Apply for Pilot</a>
+              <a className="px-5 py-3 rounded-lg border border-white/20 text-white">Contact Office</a>
+            </div>
+          </motion.div>
+        </section>
+      </main>
+
+      <footer className="mt-16 bg-gradient-to-t from-black/60 to-transparent py-10">
+        <div className="container mx-auto px-6 text-slate-300 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <h4 className="font-semibold text-lg text-white">Wadhwani Innovation Network — COE</h4>
+            <p className="mt-2 text-sm">Indian Institute of Technology Hyderabad</p>
+            <p className="mt-4 text-sm">B101, Technology Incubation Park (TIP),</p>
+            <p className="text-sm">Indian Institute of Technology Hyderabad,</p>
+            <p className="text-sm">Kandi, Sangareddy, Telangana - 502284</p>
+            <p className="mt-2 text-sm">Email: <a href="mailto:office@win.coe.iith.ac.in" className="text-indigo-300 hover:underline">office@win.coe.iith.ac.in</a></p>
+          </div>
+
+          <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div>
+              <h5 className="font-semibold">Quick Links</h5>
+              <ul className="mt-3 text-sm space-y-2">
+                <li>Research Themes</li>
+                <li>People</li>
+                <li>Facilities</li>
+                <li>Industry Partners</li>
+              </ul>
+            </div>
+
+            <div>
+              <h5 className="font-semibold">Connect</h5>
+              <p className="mt-3 text-sm">Follow us on social platforms for updates and calls for proposals.</p>
+              <div className="mt-4 flex gap-3">
+                <span className="w-9 h-9 rounded-md bg-white/5 flex items-center justify-center">LI</span>
+                <span className="w-9 h-9 rounded-md bg-white/5 flex items-center justify-center">X</span>
+                <span className="w-9 h-9 rounded-md bg-white/5 flex items-center justify-center">YT</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-8 text-center text-slate-500 text-xs">© {new Date().getFullYear()} Wadhwani Innovation Network — COE, IIT Hyderabad. All rights reserved.</div>
+      </footer>
+    </div>
+  );
+}
+
+function StatCard({ label, value }) {
+  return (
+    <div className="rounded-xl p-4 bg-white/3 border border-white/5">
+      <div className="text-sm text-slate-300">{label}</div>
+      <div className="text-xl font-bold">{value}</div>
+    </div>
+  );
+}
+
+function ProfileCard({ name, title, bio }) {
+  return (
+    <div className="rounded-xl p-4 bg-gradient-to-br from-white/3 to-white/2 border border-white/5">
+      <div className="flex items-center gap-4">
+        <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center">👩‍🔬</div>
+        <div>
+          <div className="font-semibold">{name}</div>
+          <div className="text-sm text-slate-300">{title}</div>
+        </div>
+      </div>
+      <p className="mt-3 text-sm text-slate-300">{bio}</p>
+    </div>
+  );
+}
